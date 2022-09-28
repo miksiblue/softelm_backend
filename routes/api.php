@@ -23,8 +23,9 @@ Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login'])
 
 Route::middleware('auth:api')->group(function () {
 
-    Route::prefix('admin')->middleware('scope:Manager,Admin')->group(function () {
 
+    Route::prefix('admin')->middleware('scope:Manager,Admin')->group(function () {
+        Route::resource('job-position', \App\Http\Controllers\Admin\JobPositionController::class);
 
     });
 
