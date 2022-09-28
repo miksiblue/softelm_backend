@@ -20,9 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
 Route::resource('job-position', \App\Http\Controllers\JobPositionController::class);
+Route::post('{job_position}/apply-for-job', [\App\Http\Controllers\JobPositionController::class, 'applyForJob']);
 
 Route::middleware('auth:api')->group(function () {
-
 
     Route::prefix('admin')->middleware('scope:Manager,Admin')->group(function () {
         Route::resource('job-position', \App\Http\Controllers\Admin\JobPositionController::class);
@@ -32,4 +32,5 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::get('logout', [\App\Http\Controllers\Api\AuthController::class, 'logout']);
+
 });

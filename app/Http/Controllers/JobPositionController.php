@@ -16,4 +16,17 @@ class JobPositionController extends Controller
     {
         return $jobPosition->where('id', $jobPosition->id)->with('details')->get();
     }
+
+    public function applyForJob(Request $request, JobPosition $jobPosition)
+    {
+        $this->validate($request, [
+                'name' => 'required',
+                'surname' => 'required',
+                'email' => 'required|email',
+                'birthday' => 'required|date',
+                'phone_number' => 'required',
+                'linkedln_link' => 'required|url',
+            ]
+        );
+    }
 }
