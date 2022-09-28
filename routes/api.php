@@ -26,6 +26,8 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('admin')->middleware('scope:Manager,Admin')->group(function () {
         Route::resource('job-position', \App\Http\Controllers\Admin\JobPositionController::class);
+        Route::resource('job-position-detail', \App\Http\Controllers\Admin\JobPositionDetailController::class);
+        Route::get('order', [\App\Http\Controllers\Admin\JobPositionController::class,'orderDetails']);
 
     });
 

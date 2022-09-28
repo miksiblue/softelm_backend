@@ -29,14 +29,14 @@ class JobPositionController extends Controller
 
     public function show($id)
     {
-        $jobPosition = JobPosition::withoutGlobalScope(JobPositionPublishScope::class)->find($id);
+        $jobPosition = JobPosition::withoutGlobalScope(JobPositionPublishScope::class)->with('details')->find($id);
         return $this->respondSuccess($jobPosition);
     }
 
 
     public function update(Request $request, $id)
     {
-        $jobPosition = JobPosition::withoutGlobalScope(JobPositionPublishScope::class)->find($id);
+        $jobPosition = JobPosition::withoutGlobalScope(JobPositionPublishScope::class)->with('details')->find($id);
         $jobPosition->update($request->all());
         return $this->respondSuccess($jobPosition);
     }
@@ -46,5 +46,16 @@ class JobPositionController extends Controller
         $jobPosition = JobPosition::withoutGlobalScope(JobPositionPublishScope::class)->find($id);
         $jobPosition->delete();
         return $this->respondSuccess('Job position ' . $jobPosition->position_name . ' deleted');
+    }
+
+    public function orderDetails(Request $request){
+
+
+        $this->validate($request, [
+            'order.*' => 'required|distinct',
+        ], [
+            'order.*.required' => 'Value cannot be empty',
+            'order.*.distinct' => 'Staff cannot have same order number'
+        ]);
     }
 }

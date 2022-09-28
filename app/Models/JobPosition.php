@@ -21,4 +21,9 @@ class JobPosition extends Model
         parent::boot();
         static::addGlobalScope(new JobPositionPublishScope());
     }
+
+    public function details()
+    {
+        return $this->hasMany(JobPositionDetail::class);
+    }
 }
