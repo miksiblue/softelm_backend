@@ -47,15 +47,4 @@ class JobPositionController extends Controller
         $jobPosition->delete();
         return $this->respondSuccess('Job position ' . $jobPosition->position_name . ' deleted');
     }
-
-    public function orderDetails(Request $request){
-
-
-        $this->validate($request, [
-            'order.*' => 'required|distinct',
-        ], [
-            'order.*.required' => 'Value cannot be empty',
-            'order.*.distinct' => 'Staff cannot have same order number'
-        ]);
-    }
 }

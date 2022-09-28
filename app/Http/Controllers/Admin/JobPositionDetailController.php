@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\JobPosition;
 use App\Models\JobPositionDetail;
+use App\Models\Scopes\JobPositionPublishScope;
 use Illuminate\Http\Request;
 
 class JobPositionDetailController extends Controller
@@ -27,7 +28,7 @@ class JobPositionDetailController extends Controller
 
     public function update(Request $request, JobPositionDetail $jobPositionDetail)
     {
-        $job = JobPosition::find($request->job_position_id);
+        $job = JobPosition::withoutGlobalScope(JobPositionPublishScope::class)->find($request->job_position_id);
         $orders = $job->details()->where('id', '!=', $jobPositionDetail->id)->pluck('order');
         if ($orders->contains($request->order)) {
             return 'Orders cannot have same number';

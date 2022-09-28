@@ -24,6 +24,6 @@ class JobPosition extends Model
 
     public function details()
     {
-        return $this->hasMany(JobPositionDetail::class);
+        return $this->hasMany(JobPositionDetail::class)->orderBy('order');
     }
 }

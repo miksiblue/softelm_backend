@@ -19,7 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
-
+Route::resource('job-position', \App\Http\Controllers\JobPositionController::class);
 
 Route::middleware('auth:api')->group(function () {
 
