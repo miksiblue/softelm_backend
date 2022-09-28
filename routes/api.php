@@ -17,3 +17,16 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
+
+
+Route::middleware('auth:api')->group(function () {
+
+    Route::prefix('admin')->middleware('scope:Manager,Admin')->group(function () {
+
+
+    });
+
+    Route::get('logout', [\App\Http\Controllers\Api\AuthController::class, 'logout']);
+});
