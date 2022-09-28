@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobPosition;
+use App\Models\Scopes\JobPositionPublishScope;
 use Illuminate\Http\Request;
 
 class JobPositionController extends Controller
@@ -11,7 +12,7 @@ class JobPositionController extends Controller
 
     public function index()
     {
-        $jobPositions = JobPosition::all();
+        $jobPositions = JobPosition::withoutGlobalScope(JobPositionPublishScope::class)->get();
         return $this->respondSuccess($jobPositions);
     }
 
@@ -26,21 +27,24 @@ class JobPositionController extends Controller
         return $this->respondSuccess($data);
     }
 
-    public function show(JobPosition $jobPosition)
+    public function show($id)
     {
+        $jobPosition = JobPosition::withoutGlobalScope(JobPositionPublishScope::class)->find($id);
         return $this->respondSuccess($jobPosition);
     }
 
 
-    public function update(Request $request, JobPosition $jobPosition)
+    public function update(Request $request, $id)
     {
+        $jobPosition = JobPosition::withoutGlobalScope(JobPositionPublishScope::class)->find($id);
         $jobPosition->update($request->all());
-        return $this->respondSuccess(JobPosition::find($jobPosition));
+        return $this->respondSuccess($jobPosition);
     }
 
-    public function destroy(JobPosition $jobPosition)
+    public function destroy($id)
     {
+        $jobPosition = JobPosition::withoutGlobalScope(JobPositionPublishScope::class)->find($id);
         $jobPosition->delete();
-        return $this->respondSuccess('Job position '.$jobPosition->position_name.' deleted');
+        return $this->respondSuccess('Job position ' . $jobPosition->position_name . ' deleted');
     }
 }
