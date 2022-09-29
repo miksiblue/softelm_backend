@@ -20,7 +20,6 @@ class JobPositionController extends Controller
 
     public function applyForJob(Request $request, JobPosition $jobPosition)
     {
-
         $this->validate($request, [
                 'name' => 'required',
                 'surname' => 'required',
@@ -32,13 +31,13 @@ class JobPositionController extends Controller
             ]);
 
         $email = new \SendGrid\Mail\Mail();
-        $email->setFrom((getenv("MAIL_FROM_NAME")));
+        $email->setFrom(getenv("MAIL_FROM_NAME"));
         $email->addTo('andjelaa.petrovicc@gmail.com');
         $email->setSubject('Job application');
         $email->addContent(
             "text/html",
             "<h2>Job Position: <strong>" . $jobPosition->position_name . "</strong> </h2> <br/>
-              Name: <strong>" . $request->name . "</strong> <br/>
+             Name: <strong>" . $request->name . "</strong> <br/>
              Surname: <strong>" . $request->surname . "</strong> <br/>
              Email: <strong>" . $request->email . "</strong> <br/>
              Date of birth: <strong>" . $request->date_of_birth . "</strong> <br/>
@@ -55,15 +54,12 @@ class JobPositionController extends Controller
 
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
 
-        $response = $sendgrid->send($email);
-
         try {
             $response = $sendgrid->send($email);
-            print $response->statusCode() . "\n";
-            print_r($response->headers());
-            print $response->body() . "\n";
+            return response()->json(['status code:' => $response->statusCode(), 'headers' => $response->headers(), 'body' => $response->body()], 202);
+
         } catch (\Exception $e) {
-            echo 'Caught exception: ' . $e->getMessage() . "\n";
+            return response()->json(['Caught exception ' => $e->getMessage()]);
         }
     }
 }
