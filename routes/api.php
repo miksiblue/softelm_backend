@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
 Route::resource('job-position', \App\Http\Controllers\JobPositionController::class);
 Route::post('{job_position}/apply-for-job', [\App\Http\Controllers\JobPositionController::class, 'applyForJob']);
+Route::post('new-project', [\App\Http\Controllers\NewProjectController::class, 'newProjectEmail']);
 
 Route::middleware('auth:api')->group(function () {
 
