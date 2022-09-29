@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\JobPosition;
 use Illuminate\Http\Request;
 use SendGrid;
+
 class JobPositionController extends Controller
 {
     public function index()
@@ -19,6 +20,7 @@ class JobPositionController extends Controller
 
     public function applyForJob(Request $request, JobPosition $jobPosition)
     {
+
         $this->validate($request, [
                 'name' => 'required',
                 'surname' => 'required',
@@ -27,8 +29,7 @@ class JobPositionController extends Controller
                 'phone_number' => 'required',
                 'linkedln_link' => 'required|url',
                 'cv_files' => 'required'
-            ]
-        );
+            ]);
 
         $email = new \SendGrid\Mail\Mail();
         $email->setFrom((getenv("MAIL_FROM_NAME")));
@@ -36,7 +37,8 @@ class JobPositionController extends Controller
         $email->setSubject('Job application');
         $email->addContent(
             "text/html",
-            "Name: <strong>" . $request->name . "</strong> <br/>
+            "<h2>Job Position: <strong>" . $jobPosition->position_name . "</strong> </h2> <br/>
+              Name: <strong>" . $request->name . "</strong> <br/>
              Surname: <strong>" . $request->surname . "</strong> <br/>
              Email: <strong>" . $request->email . "</strong> <br/>
              Date of birth: <strong>" . $request->date_of_birth . "</strong> <br/>
@@ -45,9 +47,9 @@ class JobPositionController extends Controller
         );
 
         foreach ($request->cv_files as $file) {
-            if ($file->getClientOriginalExtension() !== 'doc' && $file->getClientOriginalExtension() !== 'pdf' && $file->getClientOriginalExtension() !== 'docx'){
+            if ($file->getClientOriginalExtension() !== 'doc' && $file->getClientOriginalExtension() !== 'pdf' && $file->getClientOriginalExtension() !== 'docx') {
                 return response(['message' => "The file must be a file of type: pdf,doc,docx."], 422);
-        }
+            }
             $email->addAttachment(base64_decode(base64_encode($file)), 'application', $file->getClientOriginalName());
         }
 
@@ -63,6 +65,5 @@ class JobPositionController extends Controller
         } catch (\Exception $e) {
             echo 'Caught exception: ' . $e->getMessage() . "\n";
         }
-
     }
 }
