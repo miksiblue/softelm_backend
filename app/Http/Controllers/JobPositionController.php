@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobPosition;
 use Illuminate\Http\Request;
-
+use SendGrid;
 class JobPositionController extends Controller
 {
     public function index()
@@ -23,10 +23,46 @@ class JobPositionController extends Controller
                 'name' => 'required',
                 'surname' => 'required',
                 'email' => 'required|email',
-                'birthday' => 'required|date',
+                'date_of_birth' => 'required|date',
                 'phone_number' => 'required',
                 'linkedln_link' => 'required|url',
+                'cv_files' => 'required'
             ]
         );
+
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom((getenv("MAIL_FROM_NAME")));
+        $email->addTo('andjelaa.petrovicc@gmail.com');
+        $email->setSubject('Job application');
+        $email->addContent(
+            "text/html",
+            "Name: <strong>" . $request->name . "</strong> <br/>
+             Surname: <strong>" . $request->surname . "</strong> <br/>
+             Email: <strong>" . $request->email . "</strong> <br/>
+             Date of birth: <strong>" . $request->date_of_birth . "</strong> <br/>
+             Phone: <strong>" . $request->phone_number . "</strong> <br/>
+             Linkedln <strong>" . $request->linkedln_link
+        );
+
+        foreach ($request->cv_files as $file) {
+            if ($file->getClientOriginalExtension() !== 'doc' && $file->getClientOriginalExtension() !== 'pdf' && $file->getClientOriginalExtension() !== 'docx'){
+                return response(['message' => "The file must be a file of type: pdf,doc,docx."], 422);
+        }
+            $email->addAttachment(base64_decode(base64_encode($file)), 'application', $file->getClientOriginalName());
+        }
+
+        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+
+        $response = $sendgrid->send($email);
+
+        try {
+            $response = $sendgrid->send($email);
+            print $response->statusCode() . "\n";
+            print_r($response->headers());
+            print $response->body() . "\n";
+        } catch (\Exception $e) {
+            echo 'Caught exception: ' . $e->getMessage() . "\n";
+        }
+
     }
 }
